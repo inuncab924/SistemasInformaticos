@@ -1,0 +1,66 @@
+1.- asciinema
+
+2.- tmux Izquierda Log Derecha Fai-Server
+
+3.- virt-install Fai-Server IP 192.168.123.2
+
+Proxy http://192.168.123.1:3142
+
+4.- sudo apt install fai-quickstart
+
+5.- sudo nano /etc/fai/fai.conf Descomentar LOGUSER
+
+6.- sudo nano /etc/fai/nfsroot.conf Cambiar lo que hay
+escrito en DEBOOTSTRAP por:
+bullseye 192.168.123.1:3142/debian
+
+7.- sudo fai-setup
+
+8.- sudo cp /usr/share/doc/fai-doc/examples/etc/dhcpd.conf
+/etc/dhcp
+
+9.- sudo nano /etc/dhcp/dhcpd.conf Subred 192.168.123.0
+DNS E IP 192.168.123.1 Y añadir al final del archivo los
+clientes tal que así:
+host client-101 {hardware ethernet 52:54:00:11:23:01;fixed-address client-101;}
+host client-102 {hardware ethernet 52:54:00:11:23:02;fixed-address client-102;}
+host client-103 {hardware ethernet 52:54:00:11:23:03;fixed-address client-103;}
+10.- sudo nano /etc/default/isc-...... En la interfaz de v4
+poner enp1s0 entre las comillas
+
+11.- sudo nano /srv/fai/config/scripts/GRUB_PC/10-setup
+Añadir las líneas que indica el fai.md ANTES de donde
+dice “os-prober” blah blah
+
+12.- sudo fai-chboot -Ifv -k “console=ttyS0” client-101
+
+13.- En la máquina física scp /srv/SIINF/faiconfig.tar.gz
+<UsuarioDeTuFaiServer>@faiserver.fai:~
+
+14.- De vuelta en FaiServer sudo rm -rf /srv/fai/config
+Y sudo tar vfx faiconfig.tar.gz -C /
+
+15.- sudo nano /srv/fai/config/class/DEBIAN.var Cambiar
+APTPROXY por http:192.168.123.1:3142
+
+16.- sudo apt install whois (para generar contraseña
+hasheada)
+
+17.- generar contraseña hasheada con el comando que
+indica fai.md
+
+18.- sudo nano /srv/fai/config/class/FAIME.var Añadir la
+contraseña hasheada y el usuario que queramos
+
+19.- Llegados a este punto es cuando generamos las 4
+pantallas:
+Arriba Izquierda: Log en la Máquina Física
+Arriba Derecha: sudo fai-monitor
+Abajo Izquierda: journalctl
+Abajo Derecha: Instalación del client-101
+
+20.- Estando Abajo Derecha, en la máquina física:
+virt-install --name client-101 --memory 1024 --disk
+size=4 --graphics none --network
+bridge=virbr1,mac=52:54:00:11:23:01 –console
+pty,target.type=serial --pxe

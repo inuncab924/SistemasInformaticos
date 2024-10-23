@@ -1,0 +1,63 @@
+1.- Entramos en la máquina virtual mas limpia que tengamos (seguramente sea 'bullseye').
+2.- mkdir bin -> cd bin -> sudo nano eco.py -> copiamos lo siguiente en el fichero y guardamos:
+
+#!/usr/bin/python3
+
+import sys
+sys.stdout.write(sys.stdin.readline().strip().upper() + '\r\n')
+
+
+3.-Damos permisos de ejecución al fichero eco.py con
+
+    $sudo chmod 755 eco.py
+
+4.- Creamos la unidad de tipo socket con:
+        systemctl edit --user --force --full eco.socket
+
+y dentro del archivo de texto que se abre copiamos:
+
+[Unit]
+Description=Servidor de eco
+
+[Socket]
+ListenStream=6666
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
+
+
+5.- Creamos la unidad de tipo service que va a leer el archivo python creado anteriormente:
+        systemctl edit --user --force --full eco@.service
+        
+                        ^^^'@.service' evita que se pueda iniciar ni habilitar para que se inicie cuando se entre en la sesión.
+                            Esto es porque la unidad socket es la que va a proporcionar el servicio en sí, y es la que se debe 
+                            iniciar. La unidad socket va a escuchar el puerto 6666 y se va a conectar con la unidad service, y 
+                            es esta la que va a ejecutar el programa.
+
+y dentro del archivo de texto que se abre copiamos:
+
+[Unit]
+Description=Servicio para el servidor de eco
+
+[Service]
+ExecStart=%h/bin/eco.py
+StandardInput=socket
+
+
+6.- Habilitamos la unidad socket para que se ejecute siempre que iniciemos sesión:
+        systemctl --user enable eco.socket
+        systemctl --user start eco.socket
+
+
+7.- Una vez hecho, ponemos el siguiente comando para comprobar que se han creado ambas unidades correctamente:
+        systemctl --user list-units --type service
+        
+con este comando ^ no debería salir nada, pero con el siguiente...
+        systemctl --user list-units --type socket
+        
+...debería salir uno. Eso ocurre por lo explicado anteriormente sobre '@.service'
+
+8.- Escribimos $ echo Hola mundo | nc localhost 6666 y debería devolver HOLA MUNDO
+
+rm -rf .config/systemd/

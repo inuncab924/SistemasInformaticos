@@ -1,0 +1,131 @@
+
+#Se instala el paquete cowsay
+sudo apt install cowsay
+
+#Añadimos lo siguiente en crontab
+crontab -e
+
+#pinguino
+0 0,3,6,9,12,15,18,21 * * 6,7 /usr/games/cowsay -f tux "Hable a las $(date +\%R)" > /home/corviljo/hora_animal.txt
+
+#gnu
+30 1,4,7,10,13,16,19,22 * * 6,7 /usr/games/cowthink -f gnu "Pense a las $(date +\%R)" > /home/corviljo/hora_animal.txt
+
+#Eliminar el archivo el Lunes
+0 0 * * 1 rm /home/corviljo/hora_animal.txt
+
+##Si queremos ver el contenido sin tener que esperar a cualquier hora del fin de semana
+* * * * * /usr/games/cowsay -f tux "Hable a las $(date +\%R)" > /home/corviljo/hora_animal.txt
+
+
+##Para ver el contenido
+less /home/corviljo/hora_animal.txt
+
+##Una vez hecho lo comentamos todo
+crontab -e
+
+
+[·················································································]
+
+##Archivo pinguino.service
+
+systemctl edit --user --force --full pinguino.service
+
+
+[Unit]
+Description=Mensaje del pinguino
+
+[Service]
+ExecStart=sh -c '/usr/games/cowsay -f tux Hable a las $(date +%%R) > %h/hora_animal.txt'
+
+
+##Archivo gnu.service
+
+systemctl edit --user --force --full gnu.service
+
+[Unit]
+Description=Mensaje del pinguino
+
+[Service]
+ExecStart=sh -c '/usr/games/cowthink -f gnu Pense a las $(date +%%R) > %h/hora_animal.txt'
+
+
+        ## Para systemd la variable de /home se pone con %h
+
+
+(------)
+
+
+##Archivo pinguino.timer
+
+systemctl edit --user --force --full pinguino.timer
+
+[Unit]
+Description=Servicio timer para la hora del pinguino
+
+[Timer]
+OnCalendar=*-*-6,7 0,3,6,9,12,15,18,21:00:00
+AccuracySec=1s
+
+
+##Archivo gnu.timer
+
+systemctl edit --user --force --full gnu.timer
+
+[Unit]
+Description=Servicio timer para la hora del gnu
+
+[Timer]
+OnCalendar=*-*-6,7 1,4,7,10,13,16,19,22:30:00
+AccuracySec=1s
+
+
+
+##Se habilitan
+systemctl --user enable pinguino.timer
+systemctl --user enable gnu.timer
+
+##Se inician
+systemctl --user start pinguino.timer
+systemctl --user start gnu.timer
+
+##Se comprueba que están creados
+systemctl list-timers
+
+
+
+////////////////////////////////////////////////////////////////////////////
+##Por si se quiere comprobar, el timer que se ejecuta cada minuto
+##Archivo pinguinoTest.timer
+
+systemctl edit --user --force --full pinguinoTest.timer
+
+[Unit]
+Description=Servicio timer para la hora del pinguino
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+AccuracySec=1s
+
+
+##Archivo pinguinoTest.service
+
+systemctl edit --user --force --full pinguinoTest.service
+
+[Unit]
+Description=Mensaje del pinguino
+
+[Service]
+ExecStart=sh -c '/usr/games/cowsay -f tux Hable a las $(date +%%R) > %h/hora_animal.txt'
+
+##Se activa
+systemctl --user enable pinguinoTest.timer
+
+##Se inicia
+systemctl --user start pinguinoTest.timer
+////////////////////////////////////////////////////////////////////////////
+
+
+
+#Para borrar las unidades una vez estén hechas
+rm -rf .config/systemd/

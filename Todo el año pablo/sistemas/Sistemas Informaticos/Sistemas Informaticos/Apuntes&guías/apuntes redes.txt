@@ -1,0 +1,190 @@
+ -Cable serie
+ -USB
+ -Bluetooth
+ -Infrarrojos
+ -WI-FI
+ -Modem // ADSL
+ 
+ 
+ 
+ TCP/IP - "Transmission Control Protocol"
+ 
+              +------------+
+              | Aplicación |
+              |   -----    |
+   TCP|UDP -> | Transporte |--> TCP garantiza que lleguen todos los datos en paquetes, pero tardan en llegar. Con UDP la llegada es instantánea,
+              |   Puerto   |    pero lo mas normal es que se pierdan algunos paquetes (se usa UDP para streaming, al llamar o al jugar).
+              |   -----    |
+      IP|---> |    Red     |
+     NAT|     |   Router --|--> Permite interconectar varias redes entre sí. Por ejemplo, la clase de 1DAW tiene su propia red con su switch, con un router
+   CGNAT|     |            |    se podría conectar con la red de 1SMR que también tiene su switch independiente, o a otra red mas grande como Internet.
+              |   -----    |
+     MAC ---> |   Enlace   |
+              |   Switch --|--> Igual que el HUB, pero los datos se envía directamente al PC que lo requiere, eliminando toda la congestión en la red.
+              |   -----    |
+              |   Físico   |
+              |    HUB ----|--> HUB permite conectar varios ordenadores entre sí con un solo aparato. Cuatro PCs se podrían conectar con 1 HUB y 4 cables.
+              +------------+    Se manda la info al HUB y ésta luego se manda al PC que la requiera. El inconveniente es que genera mucho tráfico y se
+                                puede colapsar.
+
+
+·Protocolos
+    HTTP(S)
+    SMTP
+    POP3
+    IMAP
+    FTP - File Transfer Protocol
+
+    
+Servidor centralizado y federado
+    -Centralizado: Todo depende de un mismo servidor (Twitter o Whatsapp). Si se cae, todo deja de funcionar.
+    -Federado: Varios servidores independientes que se comunican entre sí (correo como Gmail, Hotmail, Yahoo, etc. o
+               telefonía como Movistar, Pepephone, Lowi, etc.).
+    
+
+DNS - Protocolo a nivel de aplicación que traduce los nombres de dominios a IP.
+DHCP - Protocolo a nivel de sistema que otorga una IP.
+
+IPv4 - Compuesto por 4 números del 0 al 255, como por ejemplo 192.168.54.100
+                                                               b1  b2 b3 b4 -> bytes -> 2³²-> ~4 mil millones de IPs posibles.
+                                                               
+Con IPv6 se usan 2¹²⁸ bytes, con lo que se pueden obtener mas de 8 mil de miles de miles de millones de IPs.
+
+
+Redes de clase -|A (8 bits) -> '10.0.0.0' hasta '10.255.255.255' -> 
+  (privadas)    |B (12 bits)-> '172.16.0.0' hasta '172.31.255.255' -> 
+                |C (16 bits)-> '192.168.0.0' hasta '192.168.255.255' -> Se usa para tener muchas redes distintas con pocos PCs. Pueden haber 256 redes 
+                                                                        con 256 PCs cada una.
+                                                                        
+
+
+            ////////////////////////////////////////////////////////////////////////////////////
+
+
+·Comandos configuración red
+    ifconfig (deprecated) - Hoy día se usa el comando "ip". Windows sigue usando ipconfig.
+    
+    ip  | a -> Muestra la info de todas las interfaces de red.
+        | -br a -> Muestra un resumen (-br -> brief).
+        | lo (loopback) -> Permite usar software de red sin tener una. Se usa para testeo en redes.
+        | 
+        
+    ping -> Permite comprobar si hay conexión, pero no si no la hay. Puede que no muestre nada y si haya conexión.
+
+    dpkg -s bin/ip
+    dpkg -l iproute2
+    
+    
+·Configuración de red a alto nivel
+-NetworkManager -> Demonio para gestionar conexiones de redes. Usa nmcli (comandos) y nmtui (GUI).
+-networkd -> Demonio para gestionar aparatos de red. Gestiona cosas simples como rutas y direcciones IP y se usa normalmente en servidores.
+-netplan -> Utilidad para configurar interfaces de red. Usa archivos YAML para definir la configuración de red.
+-ifupdown -> usa scripts para configurar interfaces de red. Define las configuraciones en /etc/network/interfaces. -> $ ifup    $ifdown
+
+
+sudo nano /etc/network/interfaces -> interfaces de red disponibles
+
+    iface <nombre> <familia> <nombre del método>
+    iface enp1s0 inet static
+            address 10.0.2.15/24
+            netmask 255.255.255.0
+            gateway 10.0.2.2
+            dns-nameserver 208.67.222.222
+
+            
+<familia> -> inet, inet6, ipx
+
+resolvconf -> 
+
+ifup -a -> Tan solo levanta las interfaces de red que están en 'auto'.
+
+
+sudo ifup enp1s0=dinamica
+
+systemctl cat networking.service -> Se encarga de levantar las interfaces de red que están marcados como 'auto'. ***
+
+systemctl cat ifup@enp1s0.service -> Se encarga de levantar las interfaces de red que están marcados como 'allow-hotplug'
+
+ifup@service -> Es una plantilla usada para tener varios servicios.
+
+systemctl [mask | unmask] -> Permite (des)enmascarar un servicio. Es como si estuviera borrado por completo, sin tener que hacerlo. Las plantillas no se
+                             pueden eliminar, se deben enmascarar. 'ifup@service' se debe enmascarar por esta razón, no borrar.
+
+                             
+-NetworkManager permite crear conexiones de usuario, es decir, una conexión que solo puede usar un usuario. Si varias personas usan un mismo pc, es
+posible crear una conexión para el usuario 1 que el usuario 2 no puede usar y viceversa.
+                             
+NetworkManager-|nmcli -> Permite gestionar las conexiones. Si hay una conexión sin configurar, NetworkManager la configurará automáticamente, ya que
+               |         intenta que haya conexión siempre. Hace esto realizando una conexión dhcp. Permite también la autenticación
+               |
+               |-nmtui -> Permite editar y activar conexiones y establecer el nombre de la máquina. 
+               
+
+nmcli general permissions
+               
+               
+               
+               
+········[Actividad] ·······································································[Actividad]·······
+
+stui -> estática |
+dtui -> dinámica +--+
+                    |->Los DNS de 'Open DNS'. En la conexión, quitar lo de "Conectar automáticamente". Se deja marcada "disponible para todos los usuarios"
+scli -> estática +--+
+dcli -> dinámica |
+
+propia(nuestro lorzaman) -> En la conexión, quitar lo de "Conectar automáticamente". Se deja marcada "disponible para todos los usuarios"
+
+sudo adduser alumno -> Se debe quitar "disponible para todos los usuarios"
+
+El "alumno" deberá ver las conexiones de arriba, pero no la "propia".
+
+*Con nmcli conection [up | down] y '$ curl myip.wtf/text' comprobamos si las conexiones funcionan.
+
+
+asciinema rec nm.cast -i2
+
+nmcli add -> no interactivo
+nmcli edit -> interactivo
+
+
+1.- Entramos con nmtui -> modificar una conexión:
+    dtui (conexión dinámica)
+        CONFIG. IPV4
+            Servidores DNS: 208.67.222.222
+                            208.67.220.220
+    
+    *"Conectar de forma automática" se desmarca, se deja la otra opción marcada.
+    
+    
+    stui (conexión estática)
+        CONFIG. IPV4
+            Direcciones: 10.0.2.15/24
+            Puerta de enlace: 10.0.2.2
+            Servidores DNS: 208.67.222.222
+                            208.67.220.220
+                            
+    *"Conectar de forma automática" se desmarca, se deja la otra opción marcada.
+    
+2.- Para crear las conexiones con nmcli:
+    nmcli connection edit type ethernet con-name sclii -> goto ipv4 -> set addresses 10.0.2.16/24 -> set gateway 10.0.2.2 -> set dns 208.67.222.222 
+    208.67.220.220 -> salimos de ipv4 con b -> set connection.autoconnect no -> save -> activate -> quit
+    
+    
+    nmcli connection edit type ethernet con-name dclii -> set connection.autoconnect no -> save -> activate -> quit
+    
+    
+3.- *FORMA NO INTERACTIVA*
+    sudo adduser alumno -> sudo addgroup alumno netdev -> sudo su alumno
+    Una vez dentro, creamos la conexión en un solo comando
+    nmcli connection add con-name propia ifname enp1s0 type ethernet ip4 10.0.2.16/24 gw4 10.0.2.2 autoconnect no
+    
+    Modificamos los permisos para que solo la pueda levantar/tirar el alumno
+    nmcli connection modify <UUID o nombre> connection.permissions 'alumno'
+
+  
+  
+    FORMA INTERACTIVA
+    sudo adduser alumno -> sudo addgroup alumno netdev -> sudo su alumno -> nmcli connection edit type ethernet con-name propia -> goto connection ->
+    -> set autoconnect no -> set permissions alumno -> b -> save -> activate -> quit -> poniendo "nmcli" vemos la conexión -> hacemos "exit" y salimos a 
+    -> nuestro lorzaman, intentamos hacer un "nmcli connection down propia" y vemos que no nos deja tirarla.

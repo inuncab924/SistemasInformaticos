@@ -1,0 +1,7 @@
+http://www.l3jane.net/doc/linux/suse/suselinux-adminguide_es/ch11s03.html
+https://developer.ibm.com/articles/l-initrd/
+https://docs.kernel.org/
+https://usuariodebian.blogspot.com/2017/09/diferencia-entre-bios-y-uefi-mbr-y-gpt.html
+https://wiki.debian.org/UEFI
+https://es.easeus.com/partition-manager-tips/mbr-y-gpt.html
+https://wiki.archlinux.org/title/EFI_system_partition

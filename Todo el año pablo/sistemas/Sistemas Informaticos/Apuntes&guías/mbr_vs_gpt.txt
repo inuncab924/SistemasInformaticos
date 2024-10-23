@@ -1,0 +1,27 @@
+### Initial ramdisk en linux
+"Initial ramdisk", o "initrd" por sus siglas en inglés, es un sistema que se carga en la ram al iniciar el PC.
+Crea un sistema de ficheros temporal que permite cargar archivos antes de la instalación, ya que en ese momento
+aún no existe. El ramdisk "llama" al kernel y éste se encarga de realizar la instalación con los archivos de este
+sistema de ficheros temporal.
+
+
+### Diferencias GPT y MBR
+
+#### Master Boot Record (MBR)
+Es un sistema de arranque que se situa al principio de la unidad. Contiene toda la información de arranque del
+sistema operativo y todas las particiones lógicas que contiene la unidad. Es el sistema que utiliza BIOS y existe
+desde 1983, por lo que es mas compatible con hardware antiguo. Un problema del MBR es que en linux, estos bits de 
+información de arranque se pueden corromper o borrar por error, por lo que es algo menos seguro y se deben reinstalar
+y podemos perder las particiones. Otra de las desventajas es que solo admite cuatro particiones primarias. Si se 
+quieren hacer mas, se debe modificar una de estas particiones primarias para que admita particiones lógicas dentro
+de esta (crear particiones dentro de una partición).
+
+#### GUID Partition Table (GPT)
+Es un sistema mas moderno que se caracteriza por utilizar UEFI, mas compatible con hardware moderno. Tiene varias
+ventajas con respecto a MBR, acepta discos duros de mucho más tamaño; permite mas de cuatro particiones (teóricamente
+permite particiones ilimitadas); los datos de partición y arranque están separados, por lo que existe menos posibilidad
+de perder esos datos y permite una solución de problemas más rápida y cómoda.
+El sistema GPT utiliza la partición EFI, que es una partición independiente al sistema operativo que almacena las
+aplicaciones, los cargadores de arranque y los drivers que serán utilizados por el UEFI al arrancar. En definitiva,
+almacena todos los datos que necesita la UEFI para poder iniciar el sistema. La EFI se encuentra en una partición
+distinta, por lo que esmucho mas segura al reducir la posibilidad de corrupción del sistema.

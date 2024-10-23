@@ -1,0 +1,350 @@
+#Recuperación
+
+##UD1. Explotación de sistemas informáticos.
+    -Fundamentos de los sistemas informáticos (Presentación).
+    
+##UD2. Instalación de sistemas operativos.
+    -Instalación Bullseye.
+    -Instalación fai.
+    
+##UD3. Gestión de la información.
+    -MBR VS GPT (Bios y UEFI). 
+    -Wordle (grep).
+    -Deblvm (disco duro virtual).
+    -Borgbackup.
+    
+##UD4. Configuración de sistemas operativos.
+    -Gestión de permisos.
+    -John the Ripper (contraseñas).
+    -Pingüinos y Ñúes (crontab)
+    -Servicios systemd.
+    
+    
+
+[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]
+
+
+██    ██ ██████   ██ 
+██    ██ ██   ██ ███ 
+██    ██ ██   ██  ██ 
+██    ██ ██   ██  ██ 
+ ██████  ██████   ██ 
+
+
+	•••FUNDAMENTOS DE LOS SISTEMAS INFORMÁTICOS•••
+
+-Modelo Von Neumann: Es un modelo creado en 1945 por el físico y matemático Von Neumann, y es un precursor a los PCs de hoy en día. Consiste en un dispositivo de entrada y salida, y la máquina de una memoria, una CPU y una ALU (unidad aritmética lógica). La CPU obtiene las instrucciones de la memoria, las decodifica y las envía a la ALU, que realiza las operaciones matemáticas. El problema de este modelo es que sufría de cuello de botella, ya que la memoria RAM era usada tanto para almacenar datos como instrucciones, con un único bus para realizar ambas acciones. En el modelo hardvard, hay dos memorias separadas con dos buses distintos, una para datos y otra para instrucciones. El modelo von neumann se ha mantenido por si flexibilidad y simplicidad.
+
+-Estructura física de un sistema informático:
+	•CPU: Es el “cerebro” del ordenador, la pieza que se encarga de realizar todos los procesos, de ahí su nombre.
+	•Almacenamiento secundario: Permiten almacenar la información de forma permanente e independientemente del procesador. No se pierde al apagar el ordenador (HDD, SDD, CD, USB, etc.).
+	•Memoria principal (RAM): Almacena los datos que la CPU está usando en ese momento. Es volátil (los datos se pierden cuando el PC se apaga).
+	•Placa Base: Es lo que se considera el “esqueleto” de un ordenador. Todas las piezas van conectadas aquí. 
+		      ·Ranuras DIMM (Para conectar la RAM)
+		      ·Conector de energía (Para conectar la fuente de alimentación)
+		      ·Puertos PCIe (Para conectar tarjeta gráfica, de sonido, HDD, SDD, etc.)
+		      ·Puertos USB y HDMI (Para conectar ratones, teclados, lápices, etc. /USB/ o el cable del monitor /HDMI/)
+	•Fuente de alimentación: Da corriente eléctrica al PC
+	•Periféricos: ·Entrada /Ratón, teclado, micrófono, escáner.../
+		      ·Salida /Pantalla, altavoces, impresora.../
+		      ·Almacenamiento /HDD, SDD, USB, CD.../
+		      ·Comunicación /Router, wifi, tarjeta de red.../
+
+-Estructura de software:
+	•Controladores de dispositivos (Drivers): Permite al sistema operativo reconocer las piezas que están conectadas a la placa base para poder ser utilizadas.
+	•Software de sistema: Permite interactuar con el sistema a través del hardware /SO, drivers, gestor de arranque, BIOS.../.
+	•Software de aplicación: Con el que realizamos tareas.
+
+-Proceso de arranque del sistema operativo.
+	1-Se inicia el sistema encendiendo la máquina.
+	2-La máquina realiza un diagnóstico para verificar que el hardware funciona correctamente. Se carga la BIOS o UEFI.
+	3-La BIOS o UEFI busca y carga el gestor de arranque.
+	4-El gestor de arranque carga el kernel en la memoria, que a su vez carga el sistema de archivos, de red, drivers, etc.
+	5-Se inician los procesos y servicios que se requieran para iniciar el sistema.
+	6-(Opcional) se carga el entorno gráfico.
+
+
+
+[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]
+
+
+██    ██ ██████  ██████  
+██    ██ ██   ██      ██ 
+██    ██ ██   ██  █████  
+██    ██ ██   ██ ██      
+ ██████  ██████  ███████ 
+
+
+
+	•••INSTALACIÓN BULLSEYE•••
+
+virt-install --name bullseye --ram 1024 --disk size=4 --graphics none --console pty,target.type=serial --extra-args "console=ttys0 theme=dark" --location [ruta iso]
+
+	A la hora de instalar una máquina virtual, el nombre "libvirt" es el nombre de la máquina virtual para poder diferenciarla de otras máquinas (bullseye, faiserver, etc.) y el hostname es el nombre que le identifica en una red virtual. El usuario "root" es el administrador, y si no lo creamos nuestro usuario no tendrá ciertas acciones disponibles, pero se pueden hacer usando "sudo". "Full name" es el nombre completo del usuario, pero lo que lo identifica realmente es el "Username". A la hora del particionado, permite realizar una partición en el disco para el SO y tener los archivos en la otra parte. El uso horario determina cuando se van a realizar las actualizaciones automáticas. Al descargar los paquetes se introduce un proxy concreto (10.0.2.2:3142), esto es lo que descarga los paquetes para instalar el sistema operativo. Si todas las máquinas lo hacen a la vez se crearía mucho tráfico en el aula. Al ser una máquina virtual, la máquina física funciona de servidor para esta. El SSH es una forma de conectarse a otras máquinas de manera remota, encriptada y segura sin tener que compartir contraseñas. El gestor de arranque (GRUB) es lo que permite a la máquina virtual que se inicie, se encarga de cargar los sistemas operativos de la máquina y, si hay varios, escoger cual iniciar. Si no ejecutamos el GRUB, la máquina nunca se podrá iniciar. Al usar acentos o "eñe" no los muestra correctamente, ya que necesitaríamos el archivo fix-term. Para averiguar la cantidad de paquetes instalados y el tamaño total: 'dpkg -l | wc -l'. Para salir mediante "tirón de cable": virsh destroy <nombre máquina>.
+
+virsh managedsave bullseye -> guarda el estado de la maq. virtual (como ponerla en suspensión)
+virsh restore bullseye -> restaura la maq. virtual
+
+
+	•••INSTALACIÓN FAI•••
+
+	FAI (Fully Automatic Installation) es una herramienta para la instalación y configuración masiva de sistemas operativos Linux para PCs y máquinas virtuales. Permite instalar y configurar sistemas operativos Linux y paquetes. DHCP en FAI Server permite asignar direcciones IP y otros parámetros de configuración a los sistemas que se están instalando, facilitando la comunicación y conectividad de los sistemas durante el proceso de instalación y configuración automatizada. DHCP es un protocolo de red utilizado en entornos de red para asignar automáticamente direcciones IP y otros parámetros de configuración a los dispositivos que se conectan a la red. Todas las máquinas envían una solicitud al servidor DHCP (que puede ser la propia máquina con el fai server), éste responde y asigna una IP a cada máquina (además de otros detalles como la proxy, DNS y la máscara de red), lo que permite que se conecte a la red y empiece la instalación del sistema y los paquetes. Luego el servidor TFTP, que se encarga de almacenar todos los archivos necesarios para la instalación del sistema, envía todos los datos y archivos necesarios a cada máquina conectada para que puedan comenzar con la instalación. Es importante que las máquinas que van a ser instaladas de forma desatendida tengan el arranque PXE, lo que les permite comunicarse con el servidor TFTP e iniciar el sistema operativo desde una red en lugar de un disco o un USB.
+Cuando se vaya a instalar una máquina de forma desatendida, al comando 'virt-install' se debe añadir '--pxe --network bridge=virbr1, mac=<dirección MAC>'.
+A la hora de configurar el DHCP, se deben añadir tantas entradas como máquinas se vayan a instalar, cada entrada teniendo el nombre de la máquina, la IP y la MAC que se le va a otorgar a cada una.
+
+    
+
+
+[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]
+
+    
+██    ██ ██████  ██████  
+██    ██ ██   ██      ██ 
+██    ██ ██   ██  █████  
+██    ██ ██   ██      ██ 
+ ██████  ██████  ██████ 
+
+
+
+	•••MBR VS GPT (Bios y UEFI)•••
+
+	"Initial ramdisk", o "initrd" por sus siglas en inglés, es un sistema de ficheros temporal que se carga en la ram al iniciar el PC. Permite cargar archivos antes de la instalación, ya que en ese momento aún no existe. El ramdisk "llama" al kernel y éste se encarga de realizar la instalación con los archivos de este sistema de ficheros temporal.
+
+	-MBR (Master Boot Record)
+	Es un sistema de particionado que se situa al principio de la unidad. Contiene toda la información de arranque del sistema operativo y todas las particiones lógicas que contiene la unidad (pesa tan solo 512 bytes). Es el sistema que utiliza BIOS y existe desde 1983, por lo que es mas compatible con hardware antiguo. Un problema del MBR es que en linux, estos bits de información de arranque se encuentran en los primeros sectores del disco. Se pueden corromper o borrar por error, por lo que es algo menos seguro y se deben reinstalar y podemos perder las particiones. Otra de las desventajas es que solo admite cuatro particiones primarias. Si se quieren hacer mas, se debe modificar una de estas particiones primarias para que admita particiones lógicas dentro de esta (crear particiones dentro de una partición).
+
+	-GPT (GUID Partition Table)
+	Es un sistema mas moderno que se caracteriza por utilizar UEFI, mas compatible con hardware moderno. Tiene varias ventajas con respecto a MBR, acepta discos duros de mucho más tamaño; permite mas de cuatro particiones (teóricamente permite particiones ilimitadas); los datos de partición y arranque están separados, por lo que existe menos posibilidad de perder esos datos y permite una solución de problemas más rápida y cómoda. El sistema GPT utiliza la partición EFI, que es una partición independiente al sistema operativo que almacena las aplicaciones, los cargadores de arranque y los drivers que serán utilizados por el UEFI al arrancar. En definitiva, almacena todos los datos que necesita la UEFI para poder iniciar el sistema. La EFI se encuentra en una partición distinta, por lo que es mucho mas segura al reducir la posibilidad de corrupción del sistema.
+
+
+	MBR permite hasta cuatro particiones primarias, GPT no tiene limite. Las particiones primarias se usan para la instalación de sistemas operativos y gestor de archivos, ya que se pueden acceder a ellas directamente desde el gestor de arranque. Para solventar esto, MBR permite la creación de particiones extendidas, que se crean en una de las particiones primarias. Estas particiones extendidas luego se pueden dividir en particiones lógicas y se puede realizar tantas veces como queramos (aunque no son accesibles directamente desde el gestor de arranque). 
+	
+	'efibootmngr' es una herramienta que permite administrar la configuración del gestor de arranque UEFI. Permite ver, agregar, eliminar y modificar las entradas de arranque UEFI. Sin 'efibootmngr' se deberían realizar estas operaciones de forma completamente manual, usando las opciones que la propia UEFI nos brinda aunque sean menos eficientes y accesibles.
+
+	El GRUB es el gestor de arranque. Es lo que permite que se pueda iniciar una máquina. El GRUB proporciona un menú de arranque con todos los sistemas operativos que contenga la máquina, luego carga el núcleo del SO en la memoria y éste sigue con el proceso de inicio. El archivo '/etc/default/grub' permite configurar algunas opciones del GRUB, como el orden de los SO y establecer uno por defecto, y el tiempo de espera del gestor de arranque. Cuando se modifica el archivo, es necesario realizar 'update-grub' para que surtan efecto los cambios.
+
+	
+
+	•••WORDLE (Comando GREP)•••
+
+	El comando grep nos permite buscar las líneas que contengan el patrón introducido dentro de un archivo.
+
+grep [opciones] <patrón> [/ruta/del/archivo]
+$ grep -> -i ->Ignora mayúsculas. -> grep -i 'hola' [ruta] -> Buscará 'hola', podrá devolver 'hOla' por ejemplo.
+	  -w ->Busca el patrón "aislado". grep -w 'in' [ruta] -> buscará 'in' de forma aislada y no dentro de otras palabras.
+	  -v ->Busca las líneas donde no esté el patrón -> grep -v 'hola' [ruta] -> Buscará todas las líneas que no tengan 'hola'
+	  -c ->Muestra el número de lineas donde se encuentra el patrón -> grep -c 'hola' [ruta] -> Devolverá el nº de líneas que tengan 'hola'
+	  -n ->Muestra el número de la línea donde se encuentra el patrón -> grep -n 'hola' [ruta] -> Devolverá la línea donde se encuentre 'hola'
+	  -e ->Permite buscar más de un patrón.
+
+*Se pueden usar varias opciones a la vez, por ejemplo: grep -iv 'hola' [ruta] Buscará las líneas que no contengan 'hola' ignorando mayúsculas. Si fuera grep -v 'hola' podría mostrar las líneas que contengan 'Hola' pero no 'hola'.
+
+
+	-Símbolos para usar con grep:
+	
+- "." (punto): Para buscar cualquier carácter en esa posición. grep '....o' Buscará las palabras de cinco letras y que terminen en 'o'.
+- "^" (circunflejo): Para buscar patrones al principio de la línea. grep '^hola' Buscará las líneas que empiecen por 'hola'.
+- "$" (signo de dólar): Para buscar patrones al final de una línea. grep '$adiós' Buscará las líneas que terminen por 'adiós'.
+- "*" (asterisco): Para representar cualquier número de caracteres incluyendo cero caracteres, en cualquier posición dentro del patrón de búsqueda.
+- "+" (signo más): Para buscar una o más repeticiones del carácter o grupo de caracteres que lo preceden en el patrón de búsqueda.
+- "?" (signo de interrogación): Para buscar cero o una repetición del carácter o grupo de caracteres que lo preceden en el patrón de búsqueda. Por ejemplo, el patrón "ho?la" buscará cualquier línea que contenga la palabra "hola" o "hla".
+- "[]" (corchetes): Para buscar cualquier carácter que coincida con los caracteres especificados dentro de los corchetes. Por ejemplo, el patrón "[aeiou]" buscará cualquier línea que contenga una vocal.
+- "[^]" (corchetes con acento circunflejo): Para buscar cualquier línea que no contenga los caracteres especificados dentro de los corchetes. Por ejemplo, el patrón "[^aeiou]" buscará cualquier línea que no contenga una vocal.
+
+	grep -i '^[^a]...s' -> Buscará las palabras de cinco letras que no empiecen por a, que terminen en s y se encuentren al principio de una línea.
+	grep -ie '^[^a]...s|[^a]...s$' -> Buscará las palabras de cinco letras que no empiecen por a, que terminen en s y se encuentren al principio o al final de una línea. '|' usado dentro de un patrón funciona como OR.
+		  
+
+
+	-El comando 'find' nos permite buscar carpetas y su contenido. $ find [directorio] [expresión] [-opciones]. Ejemplo:
+	find SIINF -iname '*wordle*' -> Buscará todos los archivos dentro de la carpeta SIINF cuyo nombre contenga 'wordle'. Los * determina que ahí puede haber cualquier caracter en cualquier cantidad.
+	find SIINF -mtime -7 -> Buscará todos los archivos según la fecha. -mtime modificación; -ctime creación; -atime acceso.
+	find SIINF -user alumno -> Buscará todos los archivos cuyo propietario es "alumno".
+	find SIINF -size -> Buscará los archivos según su tamaño: -size +2M busca los de mas de 2 megas; -size +2M -10M busca los de entre 2 y 10 megas.
+
+
+
+	•••Deblvm (DISCO DURO VIRTUAL)•••
+
+	LVM (Logical Volume Manager)
+
+	Es un software de gestión de almacenamiento que permite a los usuarios crear, redimensionar, administrar y migrar volúmenes lógicos en un sistema operativo. LVM permite a los usuarios crear volúmenes lógicos a partir de múltiples dispositivos de almacenamiento físico (PV), como discos duros. Los volúmenes lógicos se pueden redimensionar dinámicamente sin tener que mover datos o desmontar sistemas de archivos sin necesidad de apagar el sistema.
+También proporciona características avanzadas como el cifrado de volumen, la instantánea de volumen y la migración de datos.
+
+El uso de LVM también permite la creación de grupos de volúmenes (VG), que agrupan varios volúmenes físicos para formar un gran pool de almacenamiento. Los volúmenes lógicos se pueden asignar dinámicamente al grupo de volúmenes y aprovechar al máximo el espacio disponible. Se utiliza a menudo en servidores y estaciones de trabajo para proporcionar una gestión flexible de almacenamiento y reducir la necesidad de particionar discos duros. Se puede configurar durante la instalación del sistema operativo o añadir posteriormente a un sistema existente. También se puede utilizar con RAID.
+
+
+-PV -> Dispositivos físicos (disco duro). Se entregan al grupo de volúmenes (VG).
+PV1 PV2 etc. -> Distintos dispositivos físicos.
+  |
+  V
+-VG -> Grupo de volúmenes físicos que crean un mismo disco duro virtual.
+-LV -> Particiones del VG. La idea es añadir al VG la menor cantidad de espacio posible, ya que es mas facil expandir que contraer el espacio.
+       Por ejemplo, teniendo dos discos duros de 500GB, se añaden al VG, con LV se parten en 400G, se le dan 100GB para el sistema y 300 GB para datos.
+       En un futuro se podrían añadir mas GB para mas espacio, en lugar de meter los 900GB del tirón y tener esos 600GB sin hacer nada.
+       Esto se suele usar en servidores, ya que se pueden expandir los discos en caliente.
+
+	pvcreate -> Crea un nuevo volumen físico en un dispositivo de almacenamiento -> pvcreate [ruta]
+	pvremove -> Elimina un volumen físico del LVM -> pvremove [ruta PV]
+	vgcreate -> Crea un grupo de volumenes y agrega un PV -> vgcreate [nombre] [ruta PV]
+	vgextend -> Añade un nuevo PV a un VG -> vgextend [nombre VG] [ruta PV]
+	vgreduce -> Elimina un PV del VG -> vgreduce [nombre VG] [ruta PV]
+	lvcreate -> Crea un volumen lógico en un VG -> lvcreate -L [tamaño] [nombre LV] [nombre VG]
+	lvresize -> Cambia el tamaño de un LV -> lvresize -L [+tamaño/-tamaño] [ruta LV]
+	resize2fs -> Llena el espacio añadido con lvresize -> resize2fs [ruta LV]
+	lvremove -> Elimina un LV -> lvremove [ruta LV]
+	    
+
+
+	•••BORGBACKUP•••
+
+	borgbackup es un programa que permite la creación de copias de seguridad. Borgbackup funciona a modo repositorio, es decir, que compara las diferencias entre los archivos locales y los de la copia en el repositorio y tan solo realiza los cambios, lo que lo hace mas eficiente. Permite el cifrado de los datos mediante una contraseña.
+
+borg init -> Crea un repositorio -> borg init --encryption=repokey /[ruta] -> --encryption=repokey nos permite encriptar los datos con una contraseña
+     create -> Crea una copia de seguridad -> borg create /[ruta repositorio]::<nombre copia seguridad> [ruta del archivo/directorio a guardar]
+     list -> Muestra el contenido de un repositorio -> borg list /[ruta repositorio]
+     diff -> Muestra una comparación entre dos copias de seguridad distintas -> borg diff /[ruta repositorio]::<nombre primera copia> <nombre segunda copia>
+     info -> Muestra la info del archivo guardado -> borg info /[ruta repositorio]::<nombre copia seguridad>
+     extract -> Extrae el contenido de un repositorio en el directorio donde nos encontramos (como hacer un pull en github) -> borg extract /[ruta repositorio]::<nombre copia>
+
+
+
+    
+[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]-[····]
+
+
+██    ██ ██████  ██   ██ 
+██    ██ ██   ██ ██   ██ 
+██    ██ ██   ██ ███████ 
+██    ██ ██   ██      ██ 
+ ██████  ██████       ██ 
+
+
+	•••GESTIÓN DE PERMISOS•••
+
+	Los permisos en Linux se dividen en tres: lectura, escritura y ejecución. Cada archivo y directorio tiene estos tres permisos para el usuario, el grupo y otros usuarios.
+
+    Leer (r): Permite leer el contenido del archivo o directorio.
+    Escribir (w): Permite escribir en el archivo o directorio, modificarlo o borrarlo.
+    Ejecutar (x): Permite ejecutar el archivo si se trata de un programa o acceder al contenido del directorio si se trata de un directorio.
+    Existe otro permiso oculto llamado Shadow el cual te permite usar un directorio o archivo como sudo sin mostártelo. Un ejemplo de ello es cuando usamos el comando passwd para cambiar nuestra contraseña, ya que nos está dirigiendo
+sin que lo sepamos directamente hacia /etc/shadow con permisos de sudo para poder cambiar la contraseña hasheada de su interior.
+
+Por ejemplo:
+
+	d rwxr-x--x jcromero jcromero
+
+Esto nos dice que es un directorio (d) que pertenece al usuario 'jcromero' y al grupo 'jcromero'. Los permisos nos dicen que el usuario tiene todos los permisos, que el grupo tiene solo lextura y ejecución y otros usuarios tienen solo ejecución. Cada tipo de permiso es representado de forma octal: lectura 4, escritura 2 y ejecución 1. De esta manera, podemos modificar los permisos usando solo números...
+	chmod 644 [archivo] -> El usuario tendrá permisos de lectura y escritura (4+2), el grupo y otros usuarios tan solo de lectura (4)
+
+...o usando letras
+	chmod u=rw,g=r,o=r [archivo] -> El usuario tendrá permisos de lectura(r) y escritura(w), el grupo y otros usuarios de lectura(r)
+
+También hay un llamado Superusuario o Shadow que ejecuta acciones de sudo ocultas, como podría ser el cambiar con paswd el archivo donde se guardan las contraseñas. Que a pesar de que no tenemos permisos se ejecuta para poder cambiarlas
+
+Para cambiar el propietario de un fichero:
+	chown [usuario] [fichero] -> Cambia el usuario
+	chown [usuario]:[grupo] [fichero] -> Cambian el usuario y el grupo
+	chown :[grupo] fichero -> Cambia solo el grupo
+	chown -R [usuario] [directorio] -> Cambia los permisos del directorio y todos los archivos que contiene
+
+Una máscara establece los permisos por defecto de los nuevos archivos que se crean. La máscara realiza una resta a los permisos para establecer así los permisos por defecto, por ejemplo:
+	umask 022 -> Todos los archivos y directorios nuevos tendrán como permisos 755 = 777 - 022.
+	umask 0066 ls - l
+Para cambiar el default de permisos o modo a 0066. Por defecto el umask está en 0022. A diferencia del modo normal de cambiar los permisos estos restan el número al modo completo. Es decir
+022 - 666 = 644. El modo por defecto tendrá los permisos 644
+
+-adduser: Aparece en debian y distribuciones basadas en debian. Crea la carpeta, establece que la shell por defecto es bash, etc.
+-useradd: Aparece en todas las distribuciones. Se debe configurar todo manualmente.
+-deluser: Elimina un usuario
+-su - : permite cmabiarte a otro usuario
+-sudo su - :permite cambiarte al usuario sudo 
+
+
+	•••JOHN THE RIPPER•••
+
+Es una herramienta creada con el propósito de crackear (adivinar) contraseñas de usuarios a partir de sus hashes (contraseña encriptada).
+Consiste en adivinar las contraseñas mediante fuerza bruta, es decir, probando combinaciones hasta dar con la correcta. Hay varias formas de obtener estas combinaciones.
+Podría parecer un programa para usos maliciosos, pero se utiliza como método de seguridad para comprobar la potencia y seguridad de las contraseñas de los usuarios. Cuanto mas tarde el programa en adivinar estas contraseñas, mejores y mas seguras serán.
+Existen dos versiones del programa, la versión de paquete Linux, que es mas simple y con menos funcionalidades, y la versión jumbo, la versión completa con todas las funcionalidades que ofrece el programa.
+
+El método de cifrado usado hoy en día es 'yescrypt' aunque en versiones anteriores se utilizaba 'sha512'. Para realizar la rotura de contraseñas se debe utilizar uno de los tres modos:
+
+	-Single: Realiza combinaciones con la información del usuaio (nombre, apellidos, fecha nacimiento, dirección, nº de teléfono, etc.)
+	-Wordlist: Realiza combinaciones con las palabras y caracteres dados por un diccionario. Se suele usar cuando se quieren adivinar contraseñas que pudieran tener caracteres especiales que no se encuentren en el modelo ASCII.
+	-Incremental: Prueba todas las combinaciones posibles del modelo que se le introduzca, como ASCII de 95 caracteres o UTF-8, que tiene todos los caracteres de todos los idiomas. Es el modo que más tarda con diferencia, pero el mejor para adivinar contraseñas de tipo PIN (solo números).
+
+Las máscaras son similares a las expresiones regulares. Consisten en generar contraseñas candidatas mediante el uso de una descripción de como podría ser la contraseña. Se puede definir la longitud de la contraseña, en que lugar poner que caracter o digito, el rango de caracteres en cada posición, si está en mayúscula o minúscula, etc.
+
+    --mask=?u[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]?d
+
+En este ejemplo de máscara, se determina que la contraseña tiene seis caracteres de longitud, de los cuales el primero debe ser una letra mayúscula (?u), los caracteres dos, tres, cuatro y cinco pueden ser cualquier caracter de la 'a' a la 'z' (tanto en mayúscula como en minúscula) o un número del 1 al 9, y el último caracter debe ser un dígito. Las máscaras se suelen usar cuando se tiene cierta información sobre el formato de las contraseñas.
+
+Una vez se domina el programa, el uso de máscaras es la forma mas óptima de crackear contraseñas.
+
+El comando para usar jtr es:
+	./john --format=crypt --incremental=UTF8 --user="usuario" /srv/SIINF/daw1yescrypt -> --format=crypt es el tipo de hasheado de la contraseña.
+									    		  -> --incremental=UTF8 es el modo que se va a usar.
+											  -> --user="usuario" /srv/SIINF/daw1yescrypt es el usuario del que queremos adivinar la contraseña + la ruta del fichero con los hashes.
+
+	Windows utiliza un formato de encriptado NTLM, que es mucho mas inseguro que el método que utiliza Linux (yescrypt). Las contraseñas de Windows son muy poco seguras porque no utilizan la 'sal', que es un conjunto de caracteres aleatorios que se le añade a la contraseña antes de hashearla, haciendo que el hash de cada contraseña sea completamente distino aunque la contraseña sea la misma para varios usuarios. Windows intenta arreglar esto añadiendo un PIN de 4 dígitos que se tiene que introducir a la vez que se introduce la contraseña del usuario. 
+
+	-Las tablas arcoíris son tablas que contienen una cantidad inmensa de contraseñas junto con sus hashes que son creados de antemano y almacenados en la tabla. A la hora de crackear las contraseñas, en lugar de realizar cálculos para adivinar las contraseñas a partir de los hashes, se comparan los hashes de los usuarios con los que se encuentran en la tabla para ver si coinciden. Si alguno coincide, se puede saber la contraseña.
+
+
+
+	•••CRONTAB•••
+
+	Crontab es una herramienta que se utiliza para la administración y gestión de tareas que se ejecutan con 'cron'. Utiliza un archivo de configuración donde se especifica la periodicidad de la tarea, y la tarea que se debe realizar.
+
+	crontab -l -> Lista todas las tareas.
+		-l -u -> Lista todas las tareas de un usuario.
+		-e -> Edita las tareas.
+
+	m  |  h  | dom | mon | dow | ------> minuto | hora | dia del mes | mes | dia de la semana | comando
+      -----+-----+-----+-----+-----+--
+	*  |  *  |  *  |  *  |  *  |  	
+
+
+	*  -> 'Todos' Cualquier valor.
+	,  -> 'Y'. 1,15 -> 1 y 15.
+	/  -> 'Cada'. -> */15 -> Cada 15 (horas/minutos/dias/etc.)
+	-  -> 'De Hasta' -> 1-15 -> Todos los (horas/minutos/etc.) desde 1 hasta 15.
+
+
+
+	•••SERVICIOS SYSTEMD•••
+	Históricamente llamado System V el cual era solo un procesador de inicio de sistemas, actualmente Systemd es un sistema de inicialización y administración de servicios.
+	Supervisa los servicios en ejecución, permite la activación y desactivación de servicios y controla el inicio del sistema.
+	Por otro lado, systemctl es la herramienta que permite administrar estos servicios. Systemd trabaja con las unidades, que permiten la creación y configuración de los servicios.
+
+	-Unidad de servicio: Las más comunes. Representan servicios o demonios que se ejecutan en segundo plano. 
+	-Unidad socket: Sirven como puntos de entrada o salida para la comunicación entre procesos. Permiten la activación de servicios cuando se produce la conexión en un socket específico.
+
+	htop es una herramienta de línea de comandos en Linux que muestra información detallada sobre el uso del sistema en tiempo real. Con htop, puedes ver fácilmente qué procesos están consumiendo más recursos como CPU,
+	memoria y ancho de banda. Es útil para monitorear el rendimiento del sistema y diagnosticar problemas de manera eficiente.Además, no necesita el uso de una Bash para ejecutarse.
+
+	/sbin/init : es el proceso padre de todos los procesos del sistema. El que se encarga de ejecutarlo es systemd
+
+Las unidades de servicio se componen de tres partes:
+	-[Unit]: Descripción del servicio.
+	-[Service]: Se define la configuración del servicio en sí. Execstar contiene el comando o script a ejecutar; StandardInput establece como se va a manejar el entrada (socket).
+	-[Install]: Especifica el objetivo asociado al servicio para ejecutarlo.
+Las unidades de socket se componen de:
+	-[Unit]: Descripción del servicio.
+	-[Socket]: Especifica el servicio que escucha el socket y si es de entrada o salida.
+	-[Install]: Especifica el objetivo asociado para iniciarse automáticamente. Si se elimina, habrá que iniciarlo manualmente cada vez que se encienda la máquina.
+
+
+$ systemctl | status <servicio> -> Permite ver el estado de un servicio concreto.
+            |        --type=service --state=running -> Muestra solo las unidades de tipo servicio que se estén ejecutando.
+            |
+            | start <servicio> -> Inicia el servicio.
+            | stop <servicio> -> Para el servicio.
+            | restart <servicio> -> Para el servicio y lo inicia (hace un 'stop' y luego un 'start').
+            | reload <servicio> -> Recarga los ficheros de configuración del servicio. Se usa si se ha cambiado la configuración, para no tener que parar el servicio.
+            | enable <servicio> -> Habilita un servicio para se se inicie con la máquina.
+            | disable <servicio> -> Deshabilita un servicio para que se inicie con la máquina.
+            | edit <nombreServicio>.<tipoServicio> -> Permite crear unidades y editar ficheros de configuración.
+
+

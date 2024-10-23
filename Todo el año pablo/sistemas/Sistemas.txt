@@ -1,0 +1,75 @@
+Diferencias entre HUB, SWITCH y ROUTER
+
+HUB:
+El HUB es un dispositivo casi obsoleto que ha sido reemplazado en su mayoría por los switches.
+Su función principal es conectar físicamente varios dispositivos a una red mediante cables y reenviar datos
+entre ellos. Sin embargo, el HUB no es inteligente, ya que no puede identificar qué datos van a qué dispositivo.
+En lugar de eso, envía los datos a todos los dispositivos conectados, lo que reduce la eficiencia en términos de
+seguridad y velocidad.
+
+SWITCH:
+El switch realiza las mismas funciones que el HUB pero de una manera más inteligente. Puede almacenar la
+información de las direcciones MAC de cada dispositivo conectado a sus puertos, lo que le permite enviar los
+datos únicamente al dispositivo destinatario. Esto mejora significativamente la seguridad y la velocidad de
+transferencia de datos dentro de la red.
+
+ROUTER:
+A diferencia del HUB y el switch, que operan dentro de una red local, el router tiene la capacidad de conectarse a
+internet y comunicar dispositivos dentro de una red local con otros fuera de ella. Funciona como una puerta de
+enlace (gateway) que permite enviar y recibir información a través de diferentes redes. El router puede reenviar
+información a otra red si la dirección de destino no pertenece a la red local, o bloquearla si es necesario para
+mantener la seguridad.
+
+En resumen, un switch distribuye la información eficientemente dentro de una red local, mientras que un router es
+esencial para conectarse y comunicarse con redes externas, incluyendo internet.
+
+
+
+
+TCP/IP (Resumen)
+
+El modelo TCP/IP está dividido en cinco capas:
+
+Aplicación:
+Cuando queremos acceder a una página web, la capa de aplicación procesa la solicitud, transformando la información
+en un código entendible por la máquina y, si es necesario, aplicando encriptación. Un ejemplo de un protocolo en
+esta capa es HTTP.
+
+Transporte:
+La información procesada por la capa de aplicación se envía a la capa de transporte, que la segmenta para mejorar
+la velocidad de envío. Aquí entra en juego el protocolo TCP, que añade información en el encabezado, como los
+puertos de origen y destino, asegurando que la información no se corrompa.
+
+Red:
+En la capa de red, el protocolo IP encapsula la información añadiendo un encabezado con las direcciones IP de
+origen y destino, lo que se conoce como direccionamiento lógico.
+
+Enlace de Datos:
+La información pasa a la capa de enlace de datos, donde se le agrega un encabezado con las direcciones MAC de
+origen y destino, y un trailer al final para verificar que el fragmento no ha sufrido daños durante el tránsito.
+
+Física:
+Finalmente, en la capa física, la información se convierte en señales eléctricas, ondas de luz u otro medio
+físico que permite su transmisión al dispositivo cliente.
+
+Desde el punto de vista del cliente que recibe la información, el proceso se invierte. La información es
+decodificada desde la capa física, desencapsulando cada capa hasta llegar a la capa de aplicación, donde se
+presenta visualmente al usuario
+
+
+UDP (Resumen)
+
+El protocolo UDP (User Datagram Protocol) es conocido por su enfoque en el flujo de datos, sin establecer o
+terminar conexiones. No verifica si hay un dispositivo receptor al otro extremo, simplemente envía los datos.
+Debido a esta característica, UDP no garantiza la entrega completa ni el orden de los datos, lo que lo hace menos
+confiable en comparación con otros protocolos como TCP.
+
+UDP realiza la multiplexación y el envío de datos de manera simple y rápida. Su encabezado solo tiene 8 bytes,
+lo que significa una menor sobrecarga en comparación con TCP/IP. Esto permite que UDP sea mucho más rápido,
+haciéndolo ideal para aplicaciones donde la velocidad es crucial y una pérdida ocasional de datos no es crítica,
+como en videoconferencias, videojuegos en línea y llamadas por internet.
+
+
+MSN
+
+MSN (Microsoft Network) es un conjunto de servicios y productos de internet de Microsoft.

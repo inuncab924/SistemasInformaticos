@@ -1,0 +1,138 @@
+Gestión de ficheros:
+	La gestión de ficheros se refiere al proceso de administración de datos en un sistema informático. 
+Implica crear, modificar, organizar, almacenar y eliminar archivos de manera eficiente y segura. 
+		- Creación de archivos.
+		- Organización de archivos.
+		- Almacenamiento de archivos.
+		- Acceso a archivos.
+		- Modificación de archivos.
+		- Eliminación de archivos.
+		- Copias de seguridad y de recuperación.
+
+
+ls ->	Nos permite listar archivos
+pwd ->	Nos muestra en la carpeta en la que estamos trabajando.
+cd ->	Permite movernos entre carpetas.
+mkdir -> Crea un nuevo directorio
+ls -l -h - > Muestra el tamaño de los ficheros de la carpeta.
+cat -> muestra el interior de un fichero de texto
+cp -> copia una carpeta de un directorio a otro
+rm -> borrar un archivo
+rmdir -> borra directorios vacíos
+tree -> parecido a ls pero de una forma más visual
+rm -rf / -> destruye todo el contenido de la carpeta root
+wc -> cuenta palabras
+wc /dev/null -> lanza cosas a la nada
+dpkg --get-selections | wc -l -> muestra cuántos paquetes instalados posees ahora mismo
+
+
+el símbolo :~ hace referencia a la carpeta personal. mientras que / es la carpeta root.
+--
+La carpeta root es el nivel superior del sistema de archivos en linux y se representa simplemente con / . 
+Es en esta carpeta donde se encuentran todos los directorios y archivos del sistema y es el punto de partida
+en la navegación de archivos por consola. 
+	Algunas carpetas que nos encontramos aquí son:
+		- /bin
+		- /etc
+		- /dev
+		- /home
+		- /srv
+		- /tmp
+		- /var
+
+Bash es el intérprete de la shell o de comandos para sistemas operativos linux. Este preoporciona una interfaz de línea 
+de comandos para ejecutar e interactuar con la máquina. Además puede ejecutar comandos tanto manualmente como
+scripts. Puede ser personalizado al gusto del usuario e incorpora además algunas opciones de automatización como 
+la expansión de comandos y el autocompletado.
+--
+
+Mientras que Konsole es un emulador de terminal para entornos de escritorio. Proporciona una interfaz gráfica de
+usuario para acceder a la terminal. 
+
+
+Un "comando interno" se refiere a un comando que está integrado directametne en el intérprete de comandos o de la 
+shell, son parte del propio shell y generalmente se ejecutan más rápidamente que los comandos externos. Algunos ej:
+		- cd
+		- echo
+		- exit
+		- help
+--
+El comando echo $PATH se utiliza para imprimir el valor de la variable de entorno PATH. Esta variable almacena una 
+lista de directorios donde el sistema busca los ejecutables de los comandos cuando se escribe un nombre de 
+comando en la línea de comandos. 
+
+/usr/local/sbin:/usr/local/bin
+
+
+El símbolo  $ en la shell de bash significa que el ínterprete de comandos esá listo para recibir otra entrada
+por parte del usuario. 
+--
+
+El símbolo .. Representa la carpeta padre. Esto es útil si queremos movernos entre carpetas y no queremos 
+volver a escribir toda la ruta completa.
+
+. Hace referencia a la ruta actual dónde nos encontramos, .. hace referencia a la ruta padre de la ruta actual
+
+---
+Un sistema de ficheros es una estructura lógica utilizada por un sistema operativo para organizar y almacenar 
+archivos en un dispositivo de almacenamientos, como un disco duro, una unidad flash o una tarjeta de memoria USB.
+Este define cómo se organizan los datos en el dispositivo de almacenamiento, incluyendo la estructura de
+directorios, los métodos de acceso a los archivos, los atributos de los archivos,...
+
+Un gestor de ficheros es una aplicación de software que proporciona una interfaz de usuario para que estos puedan
+administrar y manipular archivos y directorios. Incluye una variedad de funciones, como una interfaz gráfica
+de usuario o una interfaz gráfica de comandos, integración con el sistema de archivos subyacente, funciones 
+de administración de archivos básicas y avanzadas, herramientas de visualización y edición de archivos y funciones
+de personalización.
+
+En resumen, mientras que un sistema de archivos define la estructura y las reglas para almacenar y organizar
+archivos en un dispositivo de almacenamiento, un gestor de archivos es una aplicación de software que proporciona
+a los usuarios una forma de interactuar con esos archivos, realizar operaciones sobre ellos y administrarlos
+de manera eficiente.
+---
+
+
+Una ruta se refiere a la ubicación física o lógica de un archivo o directorio dentro de un sistema de archivos.
+Ruta absoluta:
+Especifica la ubicación completa de un archivo o directorio comenzando desde la raiz del sistema de archivos.
+Representado este con el símbolo /, proporcionando la ubicación exacta del archivo o directorio.
+/home/alumno/SIINF
+
+Ruta relativa:
+Esta no cimenza desde la raiz del sistema, sino que parte del directorio actual o de otro distinto. 
+:~/SIINF
+
+Una ruta absoluta comienza desde la raíz del sistema de archivos, mientras que una ruta relativa se define
+en relación con el directorio actual en el que nos encontremos.
+
+
+virt-clone --bookworm --Madrox 
+
+
+
+BIOS y UEFI son dos tecnologías utilizadas para inicializar y administrar el hardware de una pc al encenderla.
+	-Interfaz y capacidad:
+Bios utiliza una interfaz básica y limitada para la inicialización del hardware. Tiene restricciones en la 
+capacidad de almacenamiento, el soporte de periféricos y la seguridad.
+UEFI ofrece una interfaz más avanzada y flexible con capacidades mejoradas. Permite una mayor interacción con el 
+hardware, soporte para discos duros grandes, inicialización más rápida y características de seguridad mejoradas.
+	-Modo arranque:
+Bios utiliza MBR para cargar el sistema operativo desde el disco duro, mientras que UEFI usa GPT y puede
+arrancar desde particiones más grandes pemitiendo así poseer un mayor número de estas.
+	- Compatibilidad:
+BIOS tiene una amplia compatibilidad con sistemas operativos antiguos y hardware antiguo, mientras que UEFI mejora
+la compativilidad con hardware, sistemas operativos recientes y además posee la inicialización segura(Secure Bot).
+	-Modo funcionamiento:
+Bios utiliza 16 bits mientras que UEFI desde 32 a 64 bits. 
+
+En resumen, Uefi es una tecnología más moderna y avanzada en comparacióna  BIOs, que ofrece una interfaz más
+sofisticada, capacidad de arranque mejoradas, compatibilidad con hardware moderno y seguridad mejorada. 
+
+
+Con UEFI aunque tengas Grub, este funciona por el MBR. El BIOS no. UEFI permite cambiar el gestor de arranque. 
+Con BIOS esto no es así, sino que elimina el grub y lo sustituye por otr.
+
+LVM - Gestión de volumnes lógicos que permite a los administradores de sistem crear, redimensionar, mover, eliminar
+vol lógicos de almacenamientos de manera dinámica sin necesidad de apagar el sistema ni perder datos.
+
+VG Grupo de volumen

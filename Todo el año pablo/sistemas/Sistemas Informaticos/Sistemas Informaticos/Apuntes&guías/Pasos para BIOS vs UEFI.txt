@@ -1,0 +1,272 @@
+
+## Instalar la máquina de BIOS con:
+
+virt-install --name bios \
+        --ram 1024 \
+        --disk size=8 \
+        --graphics none \
+        --cdrom /srv/SIINF/debian-11.5.0-amd64-netinst.iso \
+        --console pty,target.type=serial \
+        --boot bootmenu.enable=on,bios.useserial=on
+        
+        
+* En el menu de instalacion pulsat TAB y añadir despues de --- "console=ttyS0 theme=dark"; pulsar enter, luego pulsar space
+
+* El nombre de ususario será "debbios1"
+
+* El proxy es: "http://10.0.2.2:3142"
+
+* En la selección de entorno grafico quitar gnome y mate y habilitar ssh
+
+## Instalar la máquina UEFI con:
+
+virt-install --name uefi \
+        --ram 1024 \
+        --disk size=8 \
+        --graphics none \
+        --cdrom /srv/SIINF/debian-11.5.0-amd64-netinst.iso \
+        --console pty,target.type=serial \
+        --boot uefi
+        
+* En el menú del instalador pulsamos e y editamos en la línea:
+    
+    linux    /install.amd/vmlinuz vga=788 --- console=ttyS0
+    
+* añadimos al final la linea -> theme=dark
+    
+* Pulsamos CRTL + x para seguir con la configuración
+
+* El nombre de la máquina sera: "debuefi1"
+
+* El proxy es: "http://10.0.2.2:3142"
+
+
+## 3 Redimensionado de particiones para instalaciones adicionales:
+
+* Para editar el fichero y arrancar en modo rescate
+
+    ~$ virsh edit <nombre_máquina>
+    
+* En el xml dentro del elemento <disk type='file' device="cdrom"> añadir la línea:
+
+    <source file='/srv/SIINF/debian-11.5.0-amd64-netinst.iso'/>
+    
+* Acemos el paso anterior en las dos máquinas ^^
+
+## 4 Particionamos BIOS
+    
+* Arrancamos bios mientras pulsamos ESC con -> ~$ virsh start bios --console
+
+* Seleccionamos el 3; avanced options y lo dejamos seleccionado en rescue mode
+
+* En el menu de instalacion pulsat TAB y añadir despues de ---(dejar lo que hay) y añadir console=ttyS0 theme=dark ; luego pulsar enter; space
+
+* Navegamos por la instalación y cuando llegamos a lo de las particiones, seleccionamos la última opción "Do not use a root file..."
+
+* Luego seleccionamos la primera opcion "Execute a Shell in the installer..." y "continue"
+
+* Vamos metiendo todos los comandos de las instruccuiones y decimos que si cuando lo solicite:
+
+~ # parted /dev/vda unit s print # Nos muestra las particiones en sectores
+
+~ # e2fsck -f /dev/vda1 # # Nos permite comprobar si existe algún problema con el sistema de ficheros
+
+~ # resize2fs /dev/vda1 4G # Redimensionar el disco a 4Gb
+
+~ # parted /dev/vda resizepart 1 $((2048+1048576*4*1024/512-1))s
+
+~ # parted /dev/vda unit s print
+
+* La salida final de la consola será:
+
+Number  Start      End        Size       Type      File system     Flags
+ 1      2048s      8390655s  14774272s  primary   ext4            boot
+ 2      14778366s  16775167s  1996802s   extended
+ 5      14778368s  16775167s  1996800s   logical   linux-swap(v1)
+```
+
+* Hacemos reboot directamente y comprobamos si funciona correctamente
+
+## Particionamos UEFI
+
+* Iniciamos UEFI, pulsamos rapidamente 'esc' con ~$ virsh start uefi --console
+
+* Pulsamos e y añadimos -- console=ttyS0
+
+* Entramos Boot Manager/DVD-ROM/Advanced Setings -> Lo dejamos parado en rescue mode
+
+* Pulsamos e, añadimos -- console=ttyS0 y pulsamos CRL x 
+
+* Seleccionamos idioma y cuando nos pregunta lo de los discos damos la ultima opcion 'Do not use a root file system...'
+
+* En la siguiente pantalla seleccionamos 'Execute shell in the installer...' y decimos que si
+
+* Introducimos los comandos facilitados en la guia de JC Romero:
+
+
+~ # parted /dev/vda unit s print
+
+~ # e2fsck -f /dev/vda2
+
+~ # resize2fs /dev/vda2 4G
+
+~ # parted /dev/vda resizepart 2 $((1050624+1048576*4*1024/512-1))s
+
+ -> Decimos yes y continuamos
+ 
+~ # parted /dev/vda unit s print
+
+ -> La salida de consola será:
+ 
+Model: Virtio Block Device (virtblk)
+Disk /dev/vda: 16777216s
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags:
+
+Number  Start      End        Size      File system     Name  Flags
+ 1      2048s      1050623s   1048576s  fat32                 boot, esp
+ 2      1050624s   9439231s   8388608s  ext4
+ 3      14774272s  16775167s  2000896s  linux-swap(v1)        swap
+ 
+ 
+ * Debemos reiniciar y ver que entra correctamente en la sesión
+ 
+ ~ # reboot
+
+ ## 2º Instalacion BIOS
+
+ * iniciar, mientras pulsamos esc con ~$ virsh start bios --console
+
+ * pulsamos 3 y dejamos seleccionado 'Install' pulsamos TAB y añadimos console=ttyS0 theme=dark 
+
+ * Cuando llegamos a lo de los discos seleccionar el mayor espacio posible y continuar hasta que se vea la lista de discos
+
+ * Seleccionamos Swap, pulsamos enter, y en la primera opcion start, bajamos a la ultima opcion y start.
+
+ * El instalador nos advierte de que no se usa un swap, primero decimos que no queremos volver y luego que instale
+ 
+ * Ponemos el proxy y finalizamos
+ 
+ ## 2ª Instalacion de UEFI
+ 
+ * Entramos en la maquina y pulsamos 'esc' con ~$ virsh uefi --console
+ 
+ * Entramos en Boot Manager/DVD-ROM y lo dejamos en install
+ 
+ * Dejamos seleccionado install, pulsamos 'e' y añadimos --- console=ttyS0
+ 
+ * Pulsamos CTRL + x 
+ 
+ * Inicia la 2º instalacion
+ 
+ * En el apartado de particiones, seleccionamos go back, entamos en la ocion de más arriba y luego otravez.
+ 
+ * Entramos en 'Guided use largest continuous free space' segimos para que lo instale automáticamente en el mayor espacio disponible.
+ 
+ * Seleccionamos UTC, finaliza la instalación, logeamos y apagamos.
+ 
+ * Al iniciar la primera máquina (debuefi1), tardará un rato, porque se ha modificado el UUID de la particion SWAP. 
+ 
+ * Una vez arrancada, ejecutamos el comando sudo blkid, que nos mostrará los UUID de todas las particiones. Buscamos la UUID de la particion swap y la copiamos.
+ 
+ * Con sudo swapon --output-all nos muestra el uso de la particion swap
+ 
+ * Vamos a cambiar el UUID de la particion swap en el fichero /etc/fstab usando sudo nano
+ 
+ * En el fichero /etc/initramfs-tools/conf.d/resume, cambiamos la variable resume por la UUID nueva.
+
+ * Vamos a actualizar el fichero initrd usando el comando sudo dpkg-reconfigure linux-image-5.10.0-9-amd64
+ 
+ * sudo parted /dev/vda unit s print
+
+ 
+ 
+  ### 5 Recuperación del bootloader (GRUB)
+ ## BIOS (tras el borrado del MBR)
+ 
+ * Iniciamos una maquina BIOS de las que hemos instalado, y una vez dentro vamos a comprar los primeros 446 bytes, que son aquellos encargados de almacenar la información del bootloader GRUB
+ * Con el comando sudo xxd -l 446 /dev/vda, podemos observar esos primeros 446 BYTES del MBR
+ * Nos lo vamos a cargas usando el comando sudo dd if=/dev/zero of=/dev/vda bs=446 count=1. Vemos que pone esos bytes a 0.
+ * Apagamos la maquina y entramos en modo recovery dandole a la ESC. Añadimos console=tty.....
+ * Seleccionamos /dev/vda1, le damos enter y le damos a reinstalar GRUB. Damos en reboot system y entramos en la maquina
+ * Dentro de la maquina, abrimos un terminal y ponemos sudo update-grub. Con este comando leerá que existen más SO en el disco y los incorpora
+ 
+ 
+### UEFI 
+ Los primeros bytes no están asignados, están a 0. Esto es debido a la naturaleza de la propia UEFI, al contar con GPT. Esto quiere decir que las entradas de arranque se encuentran en otro lugar del disco. Comando efibootmgr 
+ 
+ ### 6 Cambio del orden de arranque por defecto (ambas maquinas)
+* Entramos en cualquiera de las maquinas BIOS. Entramos en /etc/default/grub
+* GRUB_DEFAULT=2 # Posicion (0 es la primera)
+* GRUB_TIMEOUT=10 # Tiempo de espera
+* GRUB_CMDLINE_LINUX_DEFAULT="" # quitamos quiet para que sea verbose
+* GRUB_CMDLINE_LINUX="console=ttyS0"
+* Una vez añadido le damos a sudo update-grub, y reiniciamos la maquina. Como podemos ver, tenemos por defecto otro SO operativo
+
+
+
+
+
+ 
+ 
+ 
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+***APUNTES DE INTERES***
+
+--- console=ttyS0 
+
+console=ttyS0 theme=dark 
+
+* El proxy es: "http://10.0.2.2:3142"
+
+
+
+
+
+
+
+***PARA BORRAR UNA MÁQUINA***
+
+~$ virsh undefine "nombre_máquina" --remove-all-storage --nvram
+
+
+***Si nos arparece en algun arranque "grub > OB"
+1. Hacemos un destroy
+2. Hacemos un ~$ reset
+
+
+
+***Salida en UEFI de posiciones de memoria***
+
+#1# 
+
+/dev/vda1: UUID="BEE6-5302" BLOCK_SIZE="512" TYPE="vfat" PARTUUID="406ab5f6-cb8a-4b│
+b7-b974-5cb978385fd2"                                                              │
+/dev/vda2: UUID="c71f30d5-cea6-4943-acd5-57c386f74701" BLOCK_SIZE="4096" TYPE="ext4│
+" PARTUUID="3c4cd827-5385-4103-89cd-966e7c5366b8"                                  │
+/dev/vda3: UUID="667b0e8b-b815-4bcf-8538-feeae5b8da8f" TYPE="swap" PARTUUID="474982│
+2a-60c4-4d9f-9499-caec6d56574c"                                                    │
+/dev/vda4: UUID="5210922e-0a59-4823-9144-51c5e8b31a31" BLOCK_SIZE="4096" TYPE="ext4│
+" PARTUUID="61d1aa94-e0ae-4938-b845-5f01e8f4f2b2"                                  │
+/dev/sr0: BLOCK_SIZE="2048" UUID="2022-09-10-10-42-19-00" LABEL="Debian 11.5.0 amd6│
+4 n" TYPE="iso9660" PTUUID="5004a58b" PTTYPE="dos"
+
+
+
+
+#2#
+
